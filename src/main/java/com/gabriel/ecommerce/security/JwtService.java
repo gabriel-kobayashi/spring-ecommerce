@@ -24,6 +24,10 @@ public class JwtService {
                 .compact();
     }
 
+    public String extractUsername(String token) {
+        return extractAllClaims(token).getSubject();
+    }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             Claims claims = Jwts.parser()
@@ -38,5 +42,12 @@ public class JwtService {
         catch (Exception e) {
             return false;
         }
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }
