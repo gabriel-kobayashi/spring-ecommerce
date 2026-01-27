@@ -1,10 +1,14 @@
 package com.gabriel.ecommerce.controller;
 
-import com.gabriel.ecommerce.dto.cart.AddtoCartRequestDto;
+import com.gabriel.ecommerce.dto.cart.AddToCartRequestDto;
+import com.gabriel.ecommerce.dto.cart.CartResponseDto;
+import com.gabriel.ecommerce.dto.cart.UpdateCartItemQuantityDto;
 import com.gabriel.ecommerce.entity.Cart;
 import com.gabriel.ecommerce.entity.User;
+import com.gabriel.ecommerce.mapper.CartMapper;
 import com.gabriel.ecommerce.service.CartService;
 import com.gabriel.ecommerce.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,21 +22,23 @@ public class CartController {
 
     private final CartService cartService;
     private final UserService userService;
+    private final CartMapper cartMapper;
 
-    public CartController(CartService cartService, UserService userService) {
+    public CartController(CartService cartService, UserService userService, CartMapper cartMapper) {
         this.cartService = cartService;
         this.userService = userService;
+        this.cartMapper = cartMapper;
     }
 
     @GetMapping
-    public ResponseEntity<Cart> getCart(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<CartResponseDto> getCart(@AuthenticationPrincipal UserDetails userDetails) {
         User user = userService.getAuthenticatedUser(userDetails);
         Cart cart = cartService.getCartByUser(user);
-        return ResponseEntity.ok(cart);
+        return ResponseEntity.ok(cartMapper.toDto(cart));
     }
 
     @PostMapping("/items")
-    public ResponseEntity<Cart> addProduct(@AuthenticationPrincipal UserDetails userDetails, @RequestBody AddtoCartRequestDto requestDto) {
+    public ResponseEntity<CartResponseDto> addProduct(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody AddToCartRequestDto requestDto) {
         User user = userService.getAuthenticatedUser(userDetails);
 
         Cart cart = cartService.addProduct(
@@ -40,15 +46,15 @@ public class CartController {
                 requestDto.productId(),
                 requestDto.quantity()
         );
-        return ResponseEntity.ok(cart);
+        return ResponseEntity.ok(cartMapper.toDto(cart));
     }
 
     @PutMapping("/items/{productId}")
-    public ResponseEntity<Cart> updateQuantity(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long productId, @RequestParam int quantity) {
+    public ResponseEntity<CartResponseDto> updateQuantity(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long productId, @Valid @RequestBody UpdateCartItemQuantityDto quantityDto) {
         User user = userService.getAuthenticatedUser(userDetails);
 
-        Cart cart = cartService.updateQuantity(user, productId, quantity);
-        return ResponseEntity.ok(cart);
+        Cart cart = cartService.updateQuantity(user, productId, quantityDto.quantity());
+        return ResponseEntity.ok(cartMapper.toDto(cart));
     }
 
     @DeleteMapping("/items/{productId}")
