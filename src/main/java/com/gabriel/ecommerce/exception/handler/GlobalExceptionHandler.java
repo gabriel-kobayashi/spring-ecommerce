@@ -1,7 +1,9 @@
 package com.gabriel.ecommerce.exception.handler;
 
+import com.gabriel.ecommerce.dto.ApiError;
 import com.gabriel.ecommerce.exception.EmptyCartException;
 import com.gabriel.ecommerce.exception.OrderNotFoundException;
+import com.gabriel.ecommerce.exception.PaymentNotAllowedException;
 import com.gabriel.ecommerce.exception.ProductNotFoundException;
 import com.gabriel.ecommerce.exception.cart.CartItemNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +35,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleOrderNotFound(OrderNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(PaymentNotAllowedException.class)
+    public ResponseEntity<ApiError> handlePaymentNotAllowed(PaymentNotAllowedException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiError(
+                        HttpStatus.BAD_REQUEST.value(),
+                        ex.getMessage(),
+                        LocalDateTime.now()
+                ));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
