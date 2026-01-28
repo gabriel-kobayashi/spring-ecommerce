@@ -2,6 +2,8 @@ package com.gabriel.ecommerce.service.impl;
 
 import com.gabriel.ecommerce.entity.*;
 import com.gabriel.ecommerce.entity.enums.OrderStatus;
+import com.gabriel.ecommerce.exception.EmptyCartException;
+import com.gabriel.ecommerce.exception.OrderNotFoundException;
 import com.gabriel.ecommerce.repository.OrderRepository;
 import com.gabriel.ecommerce.service.CartService;
 import com.gabriel.ecommerce.service.OrderService;
@@ -30,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
         Cart cart = cartService.getCartByUser(user);
 
         if (cart.getItems().isEmpty()) {
-            throw new IllegalArgumentException("Carrinho vazio");
+            throw new EmptyCartException();
         }
 
         Order order = new Order();
@@ -72,6 +74,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order getOrderByIdAndUser(Long orderId, User user) {
         return orderRepository.findByIdAndUser(orderId, user)
-                .orElseThrow(() -> new RuntimeException("Pedido não encontrado para este usuário"));
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
     }
 }
