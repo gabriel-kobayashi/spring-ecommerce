@@ -13,6 +13,6 @@ public interface OrderService {
 
     Order getOrderByIdAndUser(Long orderId, User user);
 
-    void validateOrderForPayment(Order orderId, User user);
+    void validateOrderForPayment(Long orderId, User user);
 
 }

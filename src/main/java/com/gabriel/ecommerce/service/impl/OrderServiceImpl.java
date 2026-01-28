@@ -79,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void validateOrderForPayment(Order orderId, User user) {
+    public void validateOrderForPayment(Long orderId, User user) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new PaymentNotAllowedException("Pedido não encontrado"));

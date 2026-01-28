@@ -71,7 +71,7 @@ public class OrderController {
 
         Order order = orderService.getOrderByIdAndUser(id, user);
 
-        orderService.validateOrderForPayment(order, user);
+        orderService.validateOrderForPayment(id, user);
 
         order.setStatus(OrderStatus.PAID);
         orderRepository.save(order);
