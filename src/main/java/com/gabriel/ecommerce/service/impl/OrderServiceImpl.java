@@ -2,10 +2,12 @@ package com.gabriel.ecommerce.service.impl;
 
 import com.gabriel.ecommerce.entity.*;
 import com.gabriel.ecommerce.entity.enums.OrderStatus;
+import com.gabriel.ecommerce.entity.enums.PaymentStatus;
 import com.gabriel.ecommerce.exception.EmptyCartException;
 import com.gabriel.ecommerce.exception.OrderNotFoundException;
 import com.gabriel.ecommerce.exception.PaymentNotAllowedException;
 import com.gabriel.ecommerce.repository.OrderRepository;
+import com.gabriel.ecommerce.repository.PaymentRepository;
 import com.gabriel.ecommerce.service.CartService;
 import com.gabriel.ecommerce.service.OrderService;
 import jakarta.transaction.Transactional;
@@ -21,10 +23,12 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartService cartService;
+    private final PaymentRepository paymentRepository;
 
-    public OrderServiceImpl(OrderRepository orderRepository, CartService cartService) {
+    public OrderServiceImpl(OrderRepository orderRepository, CartService cartService, PaymentRepository paymentRepository) {
         this.orderRepository = orderRepository;
         this.cartService = cartService;
+        this.paymentRepository = paymentRepository;
     }
 
     @Override
@@ -62,9 +66,18 @@ public class OrderServiceImpl implements OrderService {
 
         order.setTotal(total);
 
+        Order savedOrder = orderRepository.save(order);
+
+        Payment payment = new Payment();
+        payment.setOrder(savedOrder);
+        payment.setStatus(PaymentStatus.PENDING);
+        payment.setAmount(savedOrder.getTotal());
+
+        paymentRepository.save(payment);
+
         cartService.clearCart(user);
 
-        return orderRepository.save(order);
+        return savedOrder;
     }
 
     @Override
