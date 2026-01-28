@@ -1,5 +1,7 @@
 package com.gabriel.ecommerce.exception.handler;
 
+import com.gabriel.ecommerce.exception.EmptyCartException;
+import com.gabriel.ecommerce.exception.OrderNotFoundException;
 import com.gabriel.ecommerce.exception.ProductNotFoundException;
 import com.gabriel.ecommerce.exception.cart.CartItemNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CartItemNotFoundException.class)
     public ResponseEntity<String> handleCartItemNotFound(CartItemNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<String> handleOrderNotFound(OrderNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ex.getMessage());
     }
