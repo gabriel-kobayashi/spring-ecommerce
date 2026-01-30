@@ -34,6 +34,7 @@ Projeto com foco em **boas práticas de backend**, arquitetura em camadas e vali
 - Carrinho de compras:
   - Adicionar itens
   - Remover itens
+  - Atualizar quantidade de items
   - Visualizar carrinho
 - Criação de pedidos a partir do carrinho
 - Validação de pedido antes do pagamento
@@ -96,8 +97,8 @@ Authorization: Bearer <token>
 ## 📡 Principais Endpoints
 
 ### 🔑 Autenticação
-- **POST** `/auth/login`
 - **POST** `/auth/register`
+- **POST** `/auth/login`
 
 ### 🛒 Carrinho
 - **POST** `/cart/items`
