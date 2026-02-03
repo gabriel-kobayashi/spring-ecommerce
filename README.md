@@ -121,7 +121,7 @@ Authorization: Bearer <token>
 
 ### 🚀 Passos para execução
 ```bash
-git clone https://github.com/Gabriel-Kobayashi/spring-ecommerce.git
+git clone https://github.com/gabriel-kobayashi/spring-ecommerce.git
 cd spring-ecommerce
 mvn spring-boot:run
 ```
